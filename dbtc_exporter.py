@@ -4,7 +4,10 @@ from BeautifulSoup import BeautifulSoup
 from optparse import OptionParser
 from twill import get_browser
 from xml.etree.ElementTree import ElementTree
+import csv
+import datetime
 import re
+import sys
 
 def create_arg_parser():
     parser = OptionParser(usage="usage: %%prog\n%s" % __doc__)
@@ -72,24 +75,16 @@ class DBTCExporter(object):
 
 
 if __name__ == "__main__":
-    # parser = create_arg_parser()
-    # (options, args) = parser.parse_args()
+    parser = create_arg_parser()
+    (options, args) = parser.parse_args()
 
-    # if None in [options.user, options.password]:
-    #     print "Username and password is required" 
-    #     arg_parser.print_help()
-    #     sys.exit(-1)
+    if None in [options.user, options.password]:
+        print "Username and password is required" 
+        parser.print_help()
+        sys.exit(-1)
 
-    # exporter = DBTCExporter(parser.user, parser.password)
-    # data = exporter.retrieve_all_data()
-
-
-    import json
-    decoder = json.JSONDecoder()
-    chains = decoder.decode(open("dbtc_data.json", "r").read())
-
-    import csv
-    import datetime
+    exporter = DBTCExporter(options.user, options.password)
+    chains = exporter.retrieve_all_data()
 
     header = ["date"]
     end_date = datetime.datetime.now()
@@ -100,7 +95,7 @@ if __name__ == "__main__":
         if start_date is None or chain_start_date < start_date:
             start_date = chain_start_date
 
-    output_file = open("dbtc_export.csv", "w")
+    output_file = open("dbtc_export_2.csv", "w")
     csv_writer = csv.writer(output_file)
     csv_writer.writerow(header)
     day = datetime.timedelta(1)
