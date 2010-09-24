@@ -80,8 +80,7 @@ class DBTCExporter(object):
 
         return chain_data
 
-
-if __name__ == "__main__":
+def execute():
     parser = create_arg_parser()
     (options, args) = parser.parse_args()
 
@@ -138,3 +137,6 @@ if __name__ == "__main__":
         date = date + day
 
     output_file.close()
+
+if __name__ == "__main__":
+    execute()
