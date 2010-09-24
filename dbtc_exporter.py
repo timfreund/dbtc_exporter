@@ -6,6 +6,7 @@ from twill import get_browser
 from xml.etree.ElementTree import ElementTree
 import csv
 import datetime
+import json
 import re
 import sys
 
@@ -18,6 +19,10 @@ def create_arg_parser():
     parser.add_option("-c", "--csv",
                       dest="csv", 
                       help="Output file")
+    parser.add_option("--json-debug-output", dest="jdo",
+                      help="output chain data to a json file")
+    parser.add_option("--json-debug-input", dest="jdi",
+                      help="input chain data from a json file (no network required)") 
     return parser
 
 class DBTCExporter(object):
@@ -78,20 +83,27 @@ if __name__ == "__main__":
     parser = create_arg_parser()
     (options, args) = parser.parse_args()
 
-    if None in [options.user, options.password]:
+    if None in [options.user, options.password] and options.jdi is None:
         print "Username and password is required" 
         parser.print_help()
         sys.exit(-1)
 
-    exporter = DBTCExporter(options.user, options.password)
-    chains = exporter.retrieve_all_data()
+    if options.jdi is None:
+        exporter = DBTCExporter(options.user, options.password)
+        chains = exporter.retrieve_all_data()
+    else:
+        json_decoder = json.JSONDecoder()
+        json_data_file = open(options.jdi, "r")
+        json_data = json_data_file.read()
+        json_data_file.close()
+        chains = json_decoder.decode(json_data)
 
-    # import json
-    # json_decoder = json.JSONDecoder()
-    # json_data_file = open("dbtc_data.json", "r")
-    # json_data = json_data_file.read()
-    # json_data_file.close()
-    # chains = json_decoder.decode(json_data)
+    if options.jdo is not None:
+        json_encoder = json.JSONEncoder()
+        json_data_file = open(options.jdo, "w")
+        json_data = json_encoder.encode(chains)
+        json_data_file.write(json_data)
+        json_data_file.close()
 
     header = ["date"]
     end_date = datetime.datetime.now()
