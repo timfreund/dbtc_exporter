@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Copyright (C) 2010 Tim Freund and contributors.
+# See LICENSE for details. (MIT)
 
 from BeautifulSoup import BeautifulSoup
 from optparse import OptionParser
