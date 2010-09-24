@@ -86,6 +86,13 @@ if __name__ == "__main__":
     exporter = DBTCExporter(options.user, options.password)
     chains = exporter.retrieve_all_data()
 
+    # import json
+    # json_decoder = json.JSONDecoder()
+    # json_data_file = open("dbtc_data.json", "r")
+    # json_data = json_data_file.read()
+    # json_data_file.close()
+    # chains = json_decoder.decode(json_data)
+
     header = ["date"]
     end_date = datetime.datetime.now()
     start_date = None
@@ -95,7 +102,11 @@ if __name__ == "__main__":
         if start_date is None or chain_start_date < start_date:
             start_date = chain_start_date
 
-    output_file = open("dbtc_export_2.csv", "w")
+    if options.csv is None:
+        output_file = sys.stdout
+    else:
+        output_file = open(options.csv, "w")
+
     csv_writer = csv.writer(output_file)
     csv_writer.writerow(header)
     day = datetime.timedelta(1)
