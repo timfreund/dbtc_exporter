@@ -33,12 +33,6 @@ The last two options are just that, optional.  No provided CSV location will
 print your chain data to sys.stdout.  No json-debug-output will simply skip
 the debug output step.  
 
-Problems
---------
-
-The script only looks as far back as the current year.  That's kinda
-lame, and we should fix that.  
-
 [beautiful_soup]: http://www.crummy.com/software/BeautifulSoup/
 [twill]: http://twill.idyll.org/
 [dbtc]: http://dontbreakthechain.com/
