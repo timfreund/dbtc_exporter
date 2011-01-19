@@ -47,7 +47,7 @@ class DBTCExporter(object):
     def retrieve_all_data(self):
         chains = self.retrieve_chains()
         for chain in chains:
-            chain_data = self.retrieve_chain_data(chain['id'])
+            chain_data = self.retrieve_all_chain_data(chain['id'])
             chain['data'] = chain_data
         return chains
 
@@ -68,16 +68,27 @@ class DBTCExporter(object):
             chains.append(chain)
         return chains
 
-    def retrieve_chain_data(self, chain_id):
-        chain_data = {}
+    def retrieve_all_chain_data(self, chain_id):
+        year = datetime.datetime.now().year
+        chain_data = self.retrieve_chain_data(chain_id, year)
 
-        self.browser.go("http://dontbreakthechain.com/year/%s" % chain_id)
+        year -= 1
+        year_data = self.retrieve_chain_data(chain_id, year)
+        while len(year_data.keys()):
+            for k, v in year_data.items():
+                chain_data[k] = v
+            year -= 1
+            year_data = self.retrieve_chain_data(chain_id, year)
+        return chain_data
+
+    def retrieve_chain_data(self, chain_id, year):
+        self.browser.go("http://dontbreakthechain.com/year/%s?y=%d" % (chain_id, year))
+        chain_data = {}
         chain_soup = BeautifulSoup(self.browser.get_html())
         days = chain_soup.findAll(attrs={'class': 'day day-hover link'})
         for day in days:
             date = day.attrMap['id'].split('_')[-1]
             chain_data[date] = True
-
         return chain_data
 
 def execute():
