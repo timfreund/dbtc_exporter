@@ -122,9 +122,10 @@ def execute():
     start_date = None
     for chain in chains:
         header.append(chain['name'])
-        chain_start_date = min(chain['data'].keys())
-        if start_date is None or chain_start_date < start_date:
-            start_date = chain_start_date
+        if len(chain['data'].keys()) > 0:
+            chain_start_date = min(chain['data'].keys())
+            if start_date is None or chain_start_date < start_date:
+                start_date = chain_start_date
 
     if options.csv is None:
         output_file = sys.stdout
